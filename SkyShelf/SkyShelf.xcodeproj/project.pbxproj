@@ -11,6 +11,9 @@
 		22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF430B6DC4800B57583 /* AuthView.swift */; };
 		22F1FAF730B6DC7100B57583 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF630B6DC7100B57583 /* HomeView.swift */; };
 		22F1FAF930B6DC9500B57583 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF830B6DC9500B57583 /* RootView.swift */; };
+		22F1FAFC30B6DE9200B57583 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAFB30B6DE9200B57583 /* Config.swift */; };
+		22F1FAFE30B6DEB600B57583 /* APODItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAFD30B6DEB600B57583 /* APODItem.swift */; };
+		22F1FB0030B6DF0800B57583 /* APODService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAFF30B6DF0800B57583 /* APODService.swift */; };
 		22FD900630B68E7400ABF253 /* SkyShelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD900530B68E7400ABF253 /* SkyShelfApp.swift */; };
 		22FD900A30B68E7500ABF253 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FD900930B68E7500ABF253 /* Assets.xcassets */; };
 		22FD900D30B68E7500ABF253 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FD900C30B68E7500ABF253 /* Preview Assets.xcassets */; };
@@ -24,6 +27,9 @@
 		22F1FAF430B6DC4800B57583 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		22F1FAF630B6DC7100B57583 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		22F1FAF830B6DC9500B57583 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		22F1FAFB30B6DE9200B57583 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		22F1FAFD30B6DEB600B57583 /* APODItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APODItem.swift; sourceTree = "<group>"; };
+		22F1FAFF30B6DF0800B57583 /* APODService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APODService.swift; sourceTree = "<group>"; };
 		22FD900230B68E7400ABF253 /* SkyShelf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SkyShelf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22FD900530B68E7400ABF253 /* SkyShelfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyShelfApp.swift; sourceTree = "<group>"; };
 		22FD900930B68E7500ABF253 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -48,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				22F1FAF230B6DC1C00B57583 /* AuthManager.swift */,
+				22F1FAFF30B6DF0800B57583 /* APODService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -60,6 +67,14 @@
 				22F1FAF830B6DC9500B57583 /* RootView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		22F1FAFA30B6DE7000B57583 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				22F1FAFD30B6DEB600B57583 /* APODItem.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		22FD8FF930B68E7400ABF253 = {
@@ -81,12 +96,14 @@
 		22FD900430B68E7400ABF253 /* SkyShelf */ = {
 			isa = PBXGroup;
 			children = (
+				22F1FAFA30B6DE7000B57583 /* Models */,
 				22F1FAF130B6DBF900B57583 /* Views */,
 				22F1FAF030B6DBDE00B57583 /* Services */,
 				22FD901330B6971F00ABF253 /* GoogleService-Info.plist */,
 				22FD900530B68E7400ABF253 /* SkyShelfApp.swift */,
 				22FD900930B68E7500ABF253 /* Assets.xcassets */,
 				22FD900B30B68E7500ABF253 /* Preview Content */,
+				22F1FAFB30B6DE9200B57583 /* Config.swift */,
 			);
 			path = SkyShelf;
 			sourceTree = "<group>";
@@ -178,10 +195,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				22F1FAF330B6DC1C00B57583 /* AuthManager.swift in Sources */,
+				22F1FB0030B6DF0800B57583 /* APODService.swift in Sources */,
 				22F1FAF930B6DC9500B57583 /* RootView.swift in Sources */,
 				22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */,
+				22F1FAFE30B6DEB600B57583 /* APODItem.swift in Sources */,
 				22F1FAF730B6DC7100B57583 /* HomeView.swift in Sources */,
 				22FD900630B68E7400ABF253 /* SkyShelfApp.swift in Sources */,
+				22F1FAFC30B6DE9200B57583 /* Config.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
