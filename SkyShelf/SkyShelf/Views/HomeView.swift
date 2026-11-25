@@ -70,6 +70,12 @@ struct HomeView: View {
             }
             .navigationTitle("SkyShelf")
             .toolbar {
+                // Link to the favorites shelf
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: ShelfView()) {
+                        Label("My Shelf", systemImage: "heart.fill")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Logout") {
                         auth.signOut()
