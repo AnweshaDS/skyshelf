@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22F1FAF330B6DC1C00B57583 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF230B6DC1C00B57583 /* AuthManager.swift */; };
+		22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF430B6DC4800B57583 /* AuthView.swift */; };
+		22F1FAF730B6DC7100B57583 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF630B6DC7100B57583 /* HomeView.swift */; };
+		22F1FAF930B6DC9500B57583 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF830B6DC9500B57583 /* RootView.swift */; };
 		22FD900630B68E7400ABF253 /* SkyShelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD900530B68E7400ABF253 /* SkyShelfApp.swift */; };
-		22FD900830B68E7400ABF253 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD900730B68E7400ABF253 /* ContentView.swift */; };
 		22FD900A30B68E7500ABF253 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FD900930B68E7500ABF253 /* Assets.xcassets */; };
 		22FD900D30B68E7500ABF253 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FD900C30B68E7500ABF253 /* Preview Assets.xcassets */; };
 		22FD901430B6971F00ABF253 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 22FD901330B6971F00ABF253 /* GoogleService-Info.plist */; };
@@ -17,9 +20,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22F1FAF230B6DC1C00B57583 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		22F1FAF430B6DC4800B57583 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		22F1FAF630B6DC7100B57583 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		22F1FAF830B6DC9500B57583 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		22FD900230B68E7400ABF253 /* SkyShelf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SkyShelf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22FD900530B68E7400ABF253 /* SkyShelfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyShelfApp.swift; sourceTree = "<group>"; };
-		22FD900730B68E7400ABF253 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		22FD900930B68E7500ABF253 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		22FD900C30B68E7500ABF253 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		22FD901330B6971F00ABF253 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -38,6 +44,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		22F1FAF030B6DBDE00B57583 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				22F1FAF230B6DC1C00B57583 /* AuthManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		22F1FAF130B6DBF900B57583 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				22F1FAF430B6DC4800B57583 /* AuthView.swift */,
+				22F1FAF630B6DC7100B57583 /* HomeView.swift */,
+				22F1FAF830B6DC9500B57583 /* RootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		22FD8FF930B68E7400ABF253 = {
 			isa = PBXGroup;
 			children = (
@@ -57,9 +81,10 @@
 		22FD900430B68E7400ABF253 /* SkyShelf */ = {
 			isa = PBXGroup;
 			children = (
+				22F1FAF130B6DBF900B57583 /* Views */,
+				22F1FAF030B6DBDE00B57583 /* Services */,
 				22FD901330B6971F00ABF253 /* GoogleService-Info.plist */,
 				22FD900530B68E7400ABF253 /* SkyShelfApp.swift */,
-				22FD900730B68E7400ABF253 /* ContentView.swift */,
 				22FD900930B68E7500ABF253 /* Assets.xcassets */,
 				22FD900B30B68E7500ABF253 /* Preview Content */,
 			);
@@ -152,7 +177,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22FD900830B68E7400ABF253 /* ContentView.swift in Sources */,
+				22F1FAF330B6DC1C00B57583 /* AuthManager.swift in Sources */,
+				22F1FAF930B6DC9500B57583 /* RootView.swift in Sources */,
+				22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */,
+				22F1FAF730B6DC7100B57583 /* HomeView.swift in Sources */,
 				22FD900630B68E7400ABF253 /* SkyShelfApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,14 +11,20 @@ import FirebaseCore
 @main
 struct SkyShelfApp: App {
 
-    // Runs once when the app starts. Firebase must be configured first.
+    // @StateObject: this app owns one AuthManager for its whole life
+    @StateObject private var auth: AuthManager
+
     init() {
+        // Firebase must be configured BEFORE AuthManager is created
         FirebaseApp.configure()
+        _auth = StateObject(wrappedValue: AuthManager())
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                // @EnvironmentObject: every screen below can read "auth"
+                .environmentObject(auth)
         }
     }
 }
