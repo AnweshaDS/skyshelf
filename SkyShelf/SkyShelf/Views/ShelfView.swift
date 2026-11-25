@@ -14,6 +14,10 @@ struct ShelfView: View {
 
     @State private var searchText = ""
 
+    // Note editing: which picture is selected and the text being edited
+    @State private var selected: FavoriteItem?
+    @State private var noteText = ""
+
     // The list after applying the title search
     private var filtered: [FavoriteItem] {
         let text = searchText.trimmingCharacters(in: .whitespaces)
@@ -71,6 +75,12 @@ struct ShelfView: View {
                 List {
                     ForEach(filtered) { item in
                         row(item)
+                            .contentShape(Rectangle())
+                            // Tap a row to open the note editor
+                            .onTapGesture {
+                                noteText = item.note
+                                selected = item
+                            }
                             // Swipe left to delete
                             .swipeActions(edge: .trailing) {
                                 Button(role: .destructive) {
@@ -86,6 +96,19 @@ struct ShelfView: View {
         }
         .navigationTitle("My Shelf")
         .navigationBarTitleDisplayMode(.inline)
+        // Note editor sheet. It opens when "selected" gets a value.
+        .sheet(item: $selected) { item in
+            NoteEditorView(
+                title: item.title,
+                note: $noteText,
+                onSave: {
+                    favorites.updateNote(date: item.id, note: noteText)
+                },
+                onDelete: {
+                    favorites.updateNote(date: item.id, note: "")
+                }
+            )
+        }
         // Start the live listener when the screen appears ...
         .onAppear {
             favorites.startListening()
@@ -111,11 +134,15 @@ struct ShelfView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                if !item.note.isEmpty {
+                if item.note.isEmpty {
+                    Label("Tap to add a note", systemImage: "square.and.pencil")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } else {
                     Label(item.note, systemImage: "note.text")
                         .font(.caption)
                         .foregroundColor(.purple)
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
             }
         }
