@@ -14,6 +14,8 @@
 		22F1FAFC30B6DE9200B57583 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAFB30B6DE9200B57583 /* Config.swift */; };
 		22F1FAFE30B6DEB600B57583 /* APODItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAFD30B6DEB600B57583 /* APODItem.swift */; };
 		22F1FB0030B6DF0800B57583 /* APODService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAFF30B6DF0800B57583 /* APODService.swift */; };
+		22F1FB0230B6E06400B57583 /* APODImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FB0130B6E06400B57583 /* APODImageView.swift */; };
+		22F1FB0430B6E08D00B57583 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FB0330B6E08D00B57583 /* DetailView.swift */; };
 		22FD900630B68E7400ABF253 /* SkyShelfApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FD900530B68E7400ABF253 /* SkyShelfApp.swift */; };
 		22FD900A30B68E7500ABF253 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FD900930B68E7500ABF253 /* Assets.xcassets */; };
 		22FD900D30B68E7500ABF253 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22FD900C30B68E7500ABF253 /* Preview Assets.xcassets */; };
@@ -30,6 +32,8 @@
 		22F1FAFB30B6DE9200B57583 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		22F1FAFD30B6DEB600B57583 /* APODItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APODItem.swift; sourceTree = "<group>"; };
 		22F1FAFF30B6DF0800B57583 /* APODService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APODService.swift; sourceTree = "<group>"; };
+		22F1FB0130B6E06400B57583 /* APODImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APODImageView.swift; sourceTree = "<group>"; };
+		22F1FB0330B6E08D00B57583 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		22FD900230B68E7400ABF253 /* SkyShelf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SkyShelf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22FD900530B68E7400ABF253 /* SkyShelfApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyShelfApp.swift; sourceTree = "<group>"; };
 		22FD900930B68E7500ABF253 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -65,6 +69,8 @@
 				22F1FAF430B6DC4800B57583 /* AuthView.swift */,
 				22F1FAF630B6DC7100B57583 /* HomeView.swift */,
 				22F1FAF830B6DC9500B57583 /* RootView.swift */,
+				22F1FB0130B6E06400B57583 /* APODImageView.swift */,
+				22F1FB0330B6E08D00B57583 /* DetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -194,8 +200,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22F1FB0230B6E06400B57583 /* APODImageView.swift in Sources */,
 				22F1FAF330B6DC1C00B57583 /* AuthManager.swift in Sources */,
 				22F1FB0030B6DF0800B57583 /* APODService.swift in Sources */,
+				22F1FB0430B6E08D00B57583 /* DetailView.swift in Sources */,
 				22F1FAF930B6DC9500B57583 /* RootView.swift in Sources */,
 				22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */,
 				22F1FAFE30B6DEB600B57583 /* APODItem.swift in Sources */,
