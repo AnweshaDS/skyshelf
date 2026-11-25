@@ -11,8 +11,9 @@ struct HomeView: View {
 
     @EnvironmentObject var auth: AuthManager
 
-    // Today's picture and its loading state
+    // Today's picture and the recent gallery
     @State private var today: APODItem?
+    @State private var recent: [APODItem] = []
     @State private var isLoading = false
     @State private var errorMessage = ""
 
@@ -50,6 +51,20 @@ struct HomeView: View {
                     }
 
                     datePickerSection
+
+                    // Recent gallery: one row per day, each opens DetailView
+                    if !recent.isEmpty {
+                        Text("Recent pictures")
+                            .font(.headline)
+
+                        ForEach(recent) { item in
+                            NavigationLink(destination: DetailView(item: item)) {
+                                APODRowView(item: item)
+                            }
+                            .buttonStyle(.plain)
+                            Divider()
+                        }
+                    }
                 }
                 .padding()
             }
@@ -69,7 +84,7 @@ struct HomeView: View {
             }
             .onAppear {
                 if today == nil {
-                    loadToday()
+                    loadHome()
                 }
             }
         }
@@ -118,7 +133,7 @@ struct HomeView: View {
                 .foregroundColor(.red)
                 .multilineTextAlignment(.center)
             Button("Retry") {
-                loadToday()
+                loadHome()
             }
             .buttonStyle(.borderedProminent)
             .tint(.purple)
@@ -170,14 +185,23 @@ struct HomeView: View {
         .cornerRadius(16)
     }
 
-    // Load today's picture (with the yesterday fallback inside the service)
+    // Load today's picture, then the 10 days before it
     @MainActor
-    func loadToday() {
+    func loadHome() {
         isLoading = true
         errorMessage = ""
         Task {
             do {
-                today = try await service.fetchToday()
+                let latest = try await service.fetchToday()
+                today = latest
+
+                // The gallery is the days BEFORE today's picture
+                let end = DateHelper.addDays(-1, to: latest.date)
+                let start = DateHelper.addDays(-Config.galleryDays, to: latest.date)
+                let items = try await service.fetchRange(start: start, end: end)
+
+                // Newest first (dates sort correctly as text)
+                recent = items.sorted { $0.date > $1.date }
             } catch let error as APODError {
                 errorMessage = error.message
             } catch {
