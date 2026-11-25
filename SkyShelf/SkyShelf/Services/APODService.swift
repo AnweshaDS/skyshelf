@@ -21,7 +21,7 @@ enum APODError: Error {
         switch self {
         case .noInternet:   return "No internet connection. Check your network and try again."
         case .rateLimit:    return "Too many requests to NASA. Please wait a while and retry."
-        case .badKey:       return "The NASA API key is not valid. Check Config.swift."
+        case .badKey:       return "NASA refused the request. Please try again later."
         case .badDate:      return "That date is not valid. Pick a date from 1995-06-16 up to today (US time)."
         case .notPublished: return "NASA has no picture for this date yet."
         case .server:       return "NASA server problem. Please try again later."
@@ -56,32 +56,89 @@ enum DateHelper {
         }
         return formatter.string(from: moved)
     }
+
+    // Number of days from the first date to the second date.
+    // ("2026-11-20", "2026-11-25") gives 5
+    static func daysBetween(_ from: String, _ to: String) -> Int {
+        guard let a = formatter.date(from: from),
+              let b = formatter.date(from: to) else {
+            return 0
+        }
+        return Calendar.current.dateComponents([.day], from: a, to: b).day ?? 0
+    }
 }
 
-// Talks to the NASA APOD API using URLSession and async/await
+// Talks to the NASA APOD API using URLSession and async/await.
+// The new API lists pictures newest first and works in pages:
+// page 1 = newest picture, page 2 = the day before, and so on.
 struct APODService {
 
-    // One day. date == nil means "NASA's today".
-    func fetchDay(date: String?) async throws -> APODItem {
-        var extra: [URLQueryItem] = []
-        if let date = date {
-            extra.append(URLQueryItem(name: "date", value: date))
+    // The newest picture NASA has published
+    func fetchToday() async throws -> APODItem {
+        let items = try await fetchPage(page: 1, perPage: 1)
+        guard let latest = items.first else {
+            throw APODError.notPublished
         }
-        let data = try await load(extra)
-        do {
-            return try JSONDecoder().decode(APODItem.self, from: data)
-        } catch {
-            throw APODError.decoding
-        }
+        return latest
     }
 
-    // A range of days. NASA returns a JSON ARRAY.
+    // One day. date == nil means "the newest picture".
+    func fetchDay(date: String?) async throws -> APODItem {
+        let latest = try await fetchToday()
+
+        // No date asked, or the newest day: done
+        guard let target = date, target != latest.date else {
+            return latest
+        }
+
+        // A date after the newest picture does not exist yet
+        // (dates in "yyyy-MM-dd" text sort in date order)
+        if target > latest.date {
+            throw APODError.notPublished
+        }
+
+        // Pages go back one day at a time, so guess the page from the day count,
+        // then fix the guess using the date we actually got back.
+        var page = DateHelper.daysBetween(target, latest.date) + 1
+
+        for _ in 0..<5 {
+            let items = try await fetchPage(page: page, perPage: 1)
+            guard let item = items.first else {
+                throw APODError.notPublished
+            }
+            if item.date == target {
+                return item
+            }
+            // item newer than the target gives a positive number (go further back)
+            page += DateHelper.daysBetween(target, item.date)
+            if page < 1 {
+                throw APODError.notPublished
+            }
+        }
+        throw APODError.notPublished
+    }
+
+    // A range of days, newest first. One request for the recent days,
+    // then we keep only the dates between start and end.
     func fetchRange(start: String, end: String) async throws -> [APODItem] {
-        let extra = [
-            URLQueryItem(name: "start_date", value: start),
-            URLQueryItem(name: "end_date", value: end)
+        let today = DateHelper.string(from: Date())
+        let count = min(100, max(DateHelper.daysBetween(start, today) + 2, 1))
+        let items = try await fetchPage(page: 1, perPage: count)
+        return items.filter { $0.date >= start && $0.date <= end }
+    }
+
+    // Asks NASA for one page of pictures and decodes the JSON ARRAY
+    private func fetchPage(page: Int, perPage: Int) async throws -> [APODItem] {
+        var components = URLComponents(string: Config.apodBaseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "per_page", value: String(perPage)),
+            URLQueryItem(name: "page", value: String(page))
         ]
-        let data = try await load(extra)
+        guard let url = components?.url else {
+            throw APODError.badDate
+        }
+
+        let data = try await load(url)
         do {
             return try JSONDecoder().decode([APODItem].self, from: data)
         } catch {
@@ -89,53 +146,18 @@ struct APODService {
         }
     }
 
-    // Today's picture. NASA's day follows US time, so in Bangladesh
-    // today's picture may not exist yet. Then we try yesterday, then the day before.
-    func fetchToday() async throws -> APODItem {
-        do {
-            return try await fetchDay(date: nil)
-        } catch let error as APODError {
-            // Going back a day will not fix these, so stop here
-            if error == .noInternet || error == .rateLimit || error == .badKey {
-                throw error
-            }
-        }
-
-        var lastError: Error = APODError.server
-        for daysBack in 1...2 {
-            let day = DateHelper.addDays(-daysBack, to: DateHelper.string(from: Date()))
-            do {
-                return try await fetchDay(date: day)
-            } catch {
-                lastError = error
-            }
-        }
-        throw lastError
-    }
-
-    // Builds the URL, calls NASA and checks the status code
-    private func load(_ extra: [URLQueryItem]) async throws -> Data {
-        var components = URLComponents(string: Config.apodBaseURL)
-        components?.queryItems = [
-            URLQueryItem(name: "api_key", value: Config.nasaAPIKey),
-            URLQueryItem(name: "thumbs", value: "true")
-        ] + extra
-
-        guard let url = components?.url else {
-            throw APODError.badDate
-        }
-
+    // Calls NASA and checks the status code
+    private func load(_ url: URL) async throws -> Data {
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
 
             if let http = response as? HTTPURLResponse {
                 switch http.statusCode {
-                case 200:      return data
-                case 400:      throw APODError.badDate
-                case 403:      throw APODError.badKey
-                case 404:      throw APODError.notPublished
-                case 429:      throw APODError.rateLimit
-                default:       throw APODError.server
+                case 200:       return data
+                case 400, 404:  throw APODError.notPublished   // page or day does not exist
+                case 403:       throw APODError.badKey
+                case 429:       throw APODError.rateLimit
+                default:        throw APODError.server
                 }
             }
             return data
