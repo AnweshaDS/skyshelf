@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
 
     @EnvironmentObject var auth: AuthManager
+    @EnvironmentObject var favorites: FavoritesService
 
     // Today's picture and the recent gallery
     @State private var today: APODItem?
@@ -23,6 +24,9 @@ struct HomeView: View {
     @State private var showPicked = false
     @State private var isFetchingDate = false
     @State private var dateError = ""
+
+    // Logout confirmation
+    @State private var showLogoutAlert = false
 
     private let service = APODService()
 
@@ -78,7 +82,7 @@ struct HomeView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Logout") {
-                        auth.signOut()
+                        showLogoutAlert = true
                     }
                 }
             }
@@ -87,6 +91,17 @@ struct HomeView: View {
                 if let item = pickedItem {
                     DetailView(item: item)
                 }
+            }
+            // Ask before logging out
+            .alert("Log out?", isPresented: $showLogoutAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Log out", role: .destructive) {
+                    // Stop the Firestore listener first, then sign out
+                    favorites.stopListening()
+                    auth.signOut()
+                }
+            } message: {
+                Text("You can log back in any time. Your favorites stay saved.")
             }
             .onAppear {
                 if today == nil {

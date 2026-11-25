@@ -14,6 +14,14 @@ struct AuthView: View {
     @State private var isSignUp = false        // false = Log In, true = Sign Up
     @State private var email = ""
     @State private var password = ""
+    @State private var showPassword = false    // eye button
+
+    // Which text box has the keyboard (nil = none)
+    @FocusState private var focusedField: Field?
+
+    enum Field {
+        case email, password
+    }
 
     var body: some View {
         ZStack {
@@ -50,18 +58,40 @@ struct AuthView: View {
                             .font(.title2)
                             .fontWeight(.semibold)
 
+                        // Email box. Return key says "Next" and jumps to the password box.
                         TextField("Email", text: $email)
                             .keyboardType(.emailAddress)
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
+                            .focused($focusedField, equals: .email)
+                            .submitLabel(.next)
+                            .onSubmit {
+                                focusedField = .password
+                            }
                             .padding()
                             .background(Color(.secondarySystemBackground))
                             .cornerRadius(10)
 
-                        SecureField("Password (min 6 characters)", text: $password)
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(10)
+                        // Password box with a show/hide eye
+                        HStack {
+                            passwordField
+                                .textInputAutocapitalization(.never)
+                                .disableAutocorrection(true)
+                                .submitLabel(.go)
+                                .onSubmit {
+                                    submit()
+                                }
+
+                            Button {
+                                showPassword.toggle()
+                            } label: {
+                                Image(systemName: showPassword ? "eye.slash" : "eye")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding()
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(10)
 
                         // Error message (validation or Firebase)
                         if !auth.errorMessage.isEmpty {
@@ -106,11 +136,26 @@ struct AuthView: View {
                     .padding(.horizontal, 20)
                 }
             }
+            // Dragging the screen hides the keyboard
+            .scrollDismissesKeyboard(.interactively)
+        }
+    }
+
+    // Shows a SecureField (dots) or a normal TextField (visible text)
+    @ViewBuilder
+    private var passwordField: some View {
+        if showPassword {
+            TextField("Password (min 6 characters)", text: $password)
+                .focused($focusedField, equals: .password)
+        } else {
+            SecureField("Password (min 6 characters)", text: $password)
+                .focused($focusedField, equals: .password)
         }
     }
 
     // Check the inputs first, then call Firebase
     private func submit() {
+        focusedField = nil
         let cleanEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if cleanEmail.isEmpty || password.isEmpty {

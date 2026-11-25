@@ -86,13 +86,6 @@ struct NoteEditorView: View {
                         dismiss()
                     }
                 }
-                // Done hides the keyboard
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") {
-                        isEditing = false
-                    }
-                }
             }
             // Open the keyboard shortly after the sheet appears
             .onAppear {
