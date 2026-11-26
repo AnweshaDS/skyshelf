@@ -21,51 +21,79 @@ struct DetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
 
-                // Image (or thumbnail / placeholder for videos)
-                APODImageView(url: item.displayImageURL, height: 300)
+                // Image (or preview / placeholder for videos)
+                APODImageView(url: item.displayImageURL, height: 320)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
 
                 // Videos cannot be shown here, so offer a link to the original page
                 if !item.isImage, let link = URL(string: item.url) {
                     Link(destination: link) {
                         Label("Open video", systemImage: "play.rectangle.fill")
+                            .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.purple)
                             .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .cornerRadius(12)
                     }
                 }
 
-                Text(item.title)
-                    .font(.title2)
-                    .fontWeight(.bold)
+                // Title, date and credit
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(item.title)
+                        .font(.title)
+                        .fontWeight(.bold)
 
-                Text(item.date)
+                    HStack(spacing: 14) {
+                        Label(item.date, systemImage: "calendar")
+                            .foregroundColor(.secondary)
+                        if !item.isImage {
+                            Label("Video", systemImage: "play.circle.fill")
+                                .foregroundColor(.purple)
+                        }
+                    }
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
 
-                // Copyright only exists on some days
-                if let credit = item.cleanCopyright {
-                    Text("Credit: \(credit)")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                    // Copyright only exists on some days
+                    if let credit = item.cleanCopyright {
+                        Label(credit, systemImage: "camera")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
                 }
 
                 // HD version only exists on some days
                 if let hd = item.hdurl, let hdLink = URL(string: hd) {
-                    Link("Open HD image", destination: hdLink)
-                        .font(.subheadline)
+                    Link(destination: hdLink) {
+                        Label("Open HD image", systemImage: "arrow.up.right.square")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(12)
+                            .background(Color.purple.opacity(0.12))
+                            .foregroundColor(.purple)
+                            .cornerRadius(10)
+                    }
                 }
 
-                Divider()
-
-                Text(item.explanation)
-                    .font(.body)
+                // The explanation, inside a card
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("About this picture")
+                        .font(.headline)
+                    Text(item.explanation)
+                        .font(.body)
+                        .lineSpacing(4)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.secondarySystemGroupedBackground))
+                .cornerRadius(16)
             }
             .padding()
         }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

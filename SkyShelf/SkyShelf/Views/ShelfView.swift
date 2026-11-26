@@ -46,9 +46,10 @@ struct ShelfView: View {
                     }
                 }
             }
-            .padding(10)
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(10)
+            .padding(12)
+            .background(Color(.secondarySystemGroupedBackground))
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 1)
             .padding()
 
             if !favorites.errorMessage.isEmpty {
@@ -56,6 +57,18 @@ struct ShelfView: View {
                     .font(.footnote)
                     .foregroundColor(.red)
                     .padding(.horizontal)
+            }
+
+            // How many pictures are shown
+            if favorites.isLoaded && !favorites.favorites.isEmpty {
+                HStack {
+                    Text("\(filtered.count) of \(favorites.favorites.count) pictures")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 4)
             }
 
             // Show the right thing for each situation
@@ -76,11 +89,14 @@ struct ShelfView: View {
                     ForEach(filtered) { item in
                         row(item)
                             .contentShape(Rectangle())
-                            // Tap a row to open the note editor
+                            // Tap a card to open the note editor
                             .onTapGesture {
                                 noteText = item.note
                                 selected = item
                             }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
                             // Swipe left to delete
                             .swipeActions(edge: .trailing) {
                                 Button(role: .destructive) {
@@ -92,8 +108,10 @@ struct ShelfView: View {
                     }
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
         }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle("My Shelf")
         .navigationBarTitleDisplayMode(.inline)
         // Note editor sheet. It opens when "selected" gets a value.
@@ -119,18 +137,18 @@ struct ShelfView: View {
         }
     }
 
-    // One row: thumbnail, title, date, note preview
+    // One card: thumbnail, title, date, note preview
     private func row(_ item: FavoriteItem) -> some View {
         HStack(spacing: 12) {
-            APODImageView(url: URL(string: item.imageURL), height: 70)
-                .frame(width: 90)
+            APODImageView(url: URL(string: item.imageURL), height: 80)
+                .frame(width: 100)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(item.title)
                     .font(.headline)
                     .lineLimit(2)
 
-                Text(item.id)
+                Label(item.id, systemImage: "calendar")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -145,8 +163,13 @@ struct ShelfView: View {
                         .lineLimit(2)
                 }
             }
+
+            Spacer(minLength: 0)
         }
-        .padding(.vertical, 4)
+        .padding(10)
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(14)
+        .shadow(color: Color.black.opacity(0.06), radius: 4, x: 0, y: 2)
     }
 
     // Message shown when there is nothing to list

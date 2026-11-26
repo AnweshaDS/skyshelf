@@ -38,7 +38,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 22) {
 
                     if isLoading && today == nil {
                         ProgressView("Loading today's picture...")
@@ -56,22 +56,23 @@ struct HomeView: View {
 
                     datePickerSection
 
-                    // Recent gallery: one row per day, each opens DetailView
+                    // Recent gallery: one card per day, each opens DetailView
                     if !recent.isEmpty {
-                        Text("Recent pictures")
-                            .font(.headline)
+                        sectionTitle("Recent pictures", icon: "clock.arrow.circlepath")
 
-                        ForEach(recent) { item in
-                            NavigationLink(destination: DetailView(item: item)) {
-                                APODRowView(item: item)
+                        VStack(spacing: 12) {
+                            ForEach(recent) { item in
+                                NavigationLink(destination: DetailView(item: item)) {
+                                    APODRowView(item: item)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
-                            Divider()
                         }
                     }
                 }
                 .padding()
             }
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
             .navigationTitle("SkyShelf")
             .toolbar {
                 // Link to the favorites shelf
@@ -113,39 +114,63 @@ struct HomeView: View {
                 }
             }
         }
+        // Purple buttons and icons in the navigation bar
+        .tint(.purple)
     }
 
-    // Big card for today's picture
+    // Small heading with an icon
+    private func sectionTitle(_ text: String, icon: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundColor(.purple)
+            Text(text)
+                .font(.title3)
+                .fontWeight(.bold)
+        }
+    }
+
+    // Big card for today's picture: the title is written over the photo
     private func todayCard(_ item: APODItem) -> some View {
         NavigationLink(destination: DetailView(item: item)) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("PICTURE OF THE DAY")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.purple)
+            APODImageView(url: item.displayImageURL, height: 280)
+                .overlay(alignment: .bottomLeading) {
+                    ZStack(alignment: .bottomLeading) {
+                        // dark fade at the bottom so the white text is easy to read
+                        LinearGradient(
+                            colors: [Color.clear, Color.black.opacity(0.8)],
+                            startPoint: .center,
+                            endPoint: .bottom
+                        )
 
-                APODImageView(url: item.displayImageURL, height: 240)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("PICTURE OF THE DAY")
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white.opacity(0.85))
 
-                Text(item.title)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.leading)
+                            Text(item.title)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(2)
 
-                HStack {
-                    Text(item.date)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    if !item.isImage {
-                        Label("Video", systemImage: "play.circle")
-                            .font(.caption)
-                            .foregroundColor(.purple)
+                            HStack(spacing: 10) {
+                                Text(item.date)
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.85))
+                                if !item.isImage {
+                                    Label("Video", systemImage: "play.circle.fill")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                }
+                            }
+                        }
+                        .padding(14)
                     }
                 }
-            }
-            .padding()
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(16)
+                .cornerRadius(16)
+                .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
     }
@@ -169,11 +194,10 @@ struct HomeView: View {
         .cornerRadius(12)
     }
 
-    // DatePicker + View button
+    // DatePicker + View button, inside a card
     private var datePickerSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Browse by date")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            sectionTitle("Browse by date", icon: "calendar")
 
             DatePicker("Pick a date",
                        selection: $selectedDate,
@@ -199,15 +223,22 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.purple)
+                .background(
+                    LinearGradient(
+                        colors: [Color.purple, Color.blue],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
             .disabled(isFetchingDate)
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
+        .background(Color(.secondarySystemGroupedBackground))
         .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.06), radius: 4, x: 0, y: 2)
     }
 
     // Load today's picture, then the 10 days before it
