@@ -14,8 +14,8 @@ struct APODItem: Decodable, Identifiable {
     let date: String
     let title: String
     let explanation: String
-    let url: String             // the image, or the page to open for a video
-    let hdurl: String?          // optional: missing on some days
+    let url: String             // the picture link (image days) or the NASA page (video days)
+    let hdurl: String?          // optional: full size picture, missing on some days
     let mediaType: String       // "image" or "video"
     let copyright: String?      // optional
     let thumbnailUrl: String?   // preview picture for a video day (if any)
@@ -28,8 +28,8 @@ struct APODItem: Decodable, Identifiable {
         case mediaType = "media_type"
     }
 
-    // We build the item by hand because the new NASA API sends text with HTML tags
-    // and the video days need a little extra care.
+    // We build the item by hand because the new NASA API sends text with HTML tags,
+    // and its "url" can be a web page instead of a picture.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -55,7 +55,15 @@ struct APODItem: Decodable, Identifiable {
         hdurl = rawHd
 
         if type == "image" {
-            url = rawUrl
+            // Image day: find the link that really is a picture file.
+            // Today NASA puts it in hdurl, and url is a web page.
+            if APODItem.isImageLink(rawUrl) {
+                url = rawUrl
+            } else if let hd = rawHd, APODItem.isImageLink(hd) {
+                url = hd
+            } else {
+                url = rawUrl
+            }
             thumbnailUrl = nil
         } else if APODItem.isImageLink(rawUrl) {
             // video day, but the url is a picture: use it as the preview
@@ -63,6 +71,8 @@ struct APODItem: Decodable, Identifiable {
             thumbnailUrl = rawUrl
             url = page ?? rawUrl
         } else if let hd = rawHd, APODItem.isImageLink(hd) {
+            // video day: the preview picture is in hdurl,
+            // and url is the page to open
             thumbnailUrl = hd
             url = rawUrl
         } else {
@@ -78,10 +88,21 @@ struct APODItem: Decodable, Identifiable {
 
     // The picture we can show: the image itself, or the preview for a video.
     // http is changed to https because iOS blocks plain http.
+    // NASA's image server can resize, so we ask for a 1000 pixel wide version
+    // (smaller download, loads faster).
     var displayImageURL: URL? {
         let text: String? = isImage ? url : thumbnailUrl
         guard let text = text, !text.isEmpty else { return nil }
-        return URL(string: text.replacingOccurrences(of: "http://", with: "https://"))
+
+        var link = text.replacingOccurrences(of: "http://", with: "https://")
+        if link.contains("assets.science.nasa.gov") {
+            // remove the old size settings (everything after "?") and set our own
+            if let mark = link.firstIndex(of: "?") {
+                link = String(link[..<mark])
+            }
+            link += "?w=1000"
+        }
+        return URL(string: link)
     }
 
     // Credit text without the leading word "Credit:" and without line breaks.
@@ -97,7 +118,7 @@ struct APODItem: Decodable, Identifiable {
         return cleaned.isEmpty ? nil : cleaned
     }
 
-    // Does this link end in a picture file type?
+    // Does this link end in a picture file type? (the part after "?" is ignored)
     private static func isImageLink(_ text: String) -> Bool {
         guard let link = URL(string: text) else { return false }
         let ext = link.pathExtension.lowercased()
