@@ -72,6 +72,54 @@ class AuthManager: ObservableObject {
         }
     }
 
+    // Change the password.
+    // Step 1: prove the old password (reauthenticate).
+    // Step 2: set the new password.
+    // The completion gets nil on success, or a message to show on failure.
+    func changePassword(oldPassword: String, newPassword: String, completion: @escaping (String?) -> Void) {
+        guard let currentUser = Auth.auth().currentUser,
+              let email = currentUser.email else {
+            completion("You are not logged in.")
+            return
+        }
+
+        // A credential is the email and the old password packed together
+        let credential = EmailAuthProvider.credential(withEmail: email, password: oldPassword)
+
+        currentUser.reauthenticate(with: credential) { [weak self] _, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    completion(self?.passwordChangeMessage(for: error))
+                }
+                return
+            }
+
+            // The old password was correct, so set the new one
+            currentUser.updatePassword(to: newPassword) { error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        completion(self?.passwordChangeMessage(for: error))
+                    } else {
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
+
+    // Messages for the change password form
+    private func passwordChangeMessage(for error: Error) -> String {
+        let code = (error as NSError).code
+        switch code {
+        case 17009, 17004: return "Your current password is wrong."
+        case 17026:        return "The new password is too weak. Use at least 6 characters."
+        case 17010:        return "Too many attempts. Please wait and try again."
+        case 17020:        return "No internet connection. Check your network."
+        case 17014:        return "Please log out, log in again and retry."
+        default:           return "Could not change the password. Please try again."
+        }
+    }
+
     // Turn Firebase error codes into short readable messages
     private func friendlyMessage(for error: Error) -> String {
         let code = (error as NSError).code

@@ -80,7 +80,11 @@ struct HomeView: View {
                         Label("My Shelf", systemImage: "heart.fill")
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                // Profile icon and Logout
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: ProfileView()) {
+                        Image(systemName: "person.crop.circle")
+                    }
                     Button("Logout") {
                         showLogoutAlert = true
                     }

@@ -12,7 +12,7 @@ import UIKit
 private enum LoadState {
     case loading
     case success(UIImage)
-    case failure(String)
+    case failure
 }
 
 // Shows a picture from a URL and handles every phase:
@@ -59,9 +59,8 @@ struct APODImageView: View {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
-            case .failure(let reason):
-                // TEMPORARY: shows the reason, so we can find the problem
-                placeholder("Image could not be loaded\n" + reason)
+            case .failure:
+                placeholder("Image could not be loaded")
             }
         }
     }
@@ -71,22 +70,18 @@ struct APODImageView: View {
         var request = URLRequest(url: url)
         request.timeoutInterval = 30
         request.setValue("image/jpeg,image/png,image/*;q=0.8", forHTTPHeaderField: "Accept")
-        request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
-                         forHTTPHeaderField: "User-Agent")
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
 
-            let http = response as? HTTPURLResponse
-            if let code = http?.statusCode, code != 200 {
-                return .failure("HTTP \(code)")
+            if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+                return .failure
             }
             if let image = UIImage(data: data) {
                 return .success(image)
             }
-            let type = http?.value(forHTTPHeaderField: "Content-Type") ?? "unknown"
-            return .failure("cannot read it (\(type), \(data.count) bytes)")
+            return .failure
         } catch {
-            return .failure(error.localizedDescription)
+            return .failure
         }
     }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		221A5F9130B83088000359C6 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221A5F9030B83088000359C6 /* ProfileView.swift */; };
 		22F1FAF330B6DC1C00B57583 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF230B6DC1C00B57583 /* AuthManager.swift */; };
 		22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF430B6DC4800B57583 /* AuthView.swift */; };
 		22F1FAF730B6DC7100B57583 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F1FAF630B6DC7100B57583 /* HomeView.swift */; };
@@ -30,6 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		221A5F9030B83088000359C6 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		22F1FAF230B6DC1C00B57583 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		22F1FAF430B6DC4800B57583 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		22F1FAF630B6DC7100B57583 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				22F1FB0530B6E1C500B57583 /* APODRowView.swift */,
 				22F1FB0B30B6E44500B57583 /* ShelfView.swift */,
 				22F1FB0D30B6E5F900B57583 /* NoteEditorView.swift */,
+				221A5F9030B83088000359C6 /* ProfileView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				22F1FB0630B6E1C500B57583 /* APODRowView.swift in Sources */,
 				22F1FAF930B6DC9500B57583 /* RootView.swift in Sources */,
 				22F1FAF530B6DC4800B57583 /* AuthView.swift in Sources */,
+				221A5F9130B83088000359C6 /* ProfileView.swift in Sources */,
 				22F1FAFE30B6DEB600B57583 /* APODItem.swift in Sources */,
 				22F1FB0830B6E2AC00B57583 /* FavoriteItem.swift in Sources */,
 				22F1FAF730B6DC7100B57583 /* HomeView.swift in Sources */,
